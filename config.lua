@@ -5,7 +5,7 @@
 
 -- general
 lvim.colorscheme = "catppuccin"
-lvim.format_on_save.pattern = { "*.lua", "*.js", "*.jsx", "*ts", "*tsx", ".json" }
+lvim.format_on_save.pattern = { "*.lua", "*.js", "*.jsx", "*ts", "*tsx", ".json", "*.cs" }
 lvim.format_on_save.enabled = true
 lvim.transparent_window = true
 
@@ -188,8 +188,12 @@ formatters.setup {
     -- options such as `--line-width 80` become either `{"--line-width", "80"}` or `{"--line-width=80"}`
     args = { "--print-width", "100" },
     ---@usage only start in these filetypes, by default it will attach to all filetypes it supports
-    filetypes = { "typescript", "typescriptreact", "javascript", "javascriptreact", "json" },
+    filetypes = { "typescript", "typescriptreact", "javascript", "javascriptreact", "json", },
   },
+  {
+    name = "csharpier",
+    filetypes = { "cs" },
+  }
 }
 
 local linters = require "lvim.lsp.null-ls.linters"
