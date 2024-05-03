@@ -5,7 +5,7 @@
 
 -- general
 lvim.colorscheme = "catppuccin"
-lvim.format_on_save.pattern = { "*.lua", "*.js", "*.jsx", "*ts", "*tsx" }
+lvim.format_on_save.pattern = { "*.lua", "*.js", "*.jsx", "*ts", "*tsx", ".json" }
 lvim.format_on_save.enabled = true
 lvim.transparent_window = true
 
@@ -16,24 +16,13 @@ local opts = {}
 require("lvim.lsp.manager").setup("tailwindcss", opts)
 require("lvim.lsp.manager").setup("eslint", opts)
 
+
 lvim.builtin.lualine.active = false
 lvim.builtin.lualine.style = "lvim"
 
 
-
--- nvimtree setup
+-- NOTE:  nvimtree setup
 lvim.builtin.nvimtree.active = true
--- lvim.builtin.nvimtree.setup.auto_reload_on_write = true
--- lvim.builtin.nvimtree.setup.disable_netrw = true
--- lvim.builtin.nvimtree.setup.hijack_netrw = true
--- lvim.builtin.nvimtree.setup.hijack_cursor = true
--- lvim.builtin.nvimtree.setup.hijack_unnamed_buffer_when_opening = false
--- lvim.builtin.nvimtree.setup.sync_root_with_cwd = true
--- lvim.builtin.nvimtree.setup.update_focused_file.update_root = false
--- lvim.builtin.nvimtree.setup.view.adaptive_size = false
--- lvim.builtin.nvimtree.setup.view.preserve_window_proportions = true
--- lvim.builtin.nvimtree.setup.filesystem_watchers.enable = true
--- lvim.builtin.nvimtree.setup.actions.open_file.resize_window = true
 lvim.builtin.nvimtree.setup.renderer.icons.glyphs.folder.arrow_closed = ""
 lvim.builtin.nvimtree.setup.renderer.icons.glyphs.folder.arrow_open = ""
 
@@ -62,20 +51,20 @@ lvim.builtin.nvimtree.setup.view.float.open_win_config.width = window_w_int
 lvim.builtin.nvimtree.setup.view.float.open_win_config.height = window_h_int
 lvim.builtin.nvimtree.setup.view.width = math.floor(vim.opt.columns:get() * WIDTH_RATIO)
 lvim.builtin.telescope.theme = "center"
---
 
 -- telescope config
 -- lvim.builtin.telescope.defaults.layout_strategy = "horizontal"
 -- lvim.builtin.telescope.defaults.sorting_strategy = "ascending"
 -- lvim.builtin.telescope.defaults.winblend = 0
 -- lvim.builtin.telescope.theme = 'ivy'
+
 lvim.builtin.telescope.on_config_done = function(telescope)
   pcall(telescope.load_extension, "frecency")
   pcall(telescope.load_extension, "neoclip")
 end
 
 
--- keymap
+-- NOTE: Tmux Mapping
 lvim.keys.normal_mode["<C-h>"] = "<cmd> TmuxNavigateLeft<CR>"
 lvim.keys.normal_mode["<C-l>"] = "<cmd> TmuxNavigateRight<CR>"
 lvim.keys.normal_mode["<C-j>"] = "<cmd> TmuxNavigateDown<CR>"
@@ -104,6 +93,14 @@ lvim.plugins = {
     end,
   },
   {
+    "iamcco/markdown-preview.nvim",
+    build = "cd app && npm install",
+    ft = "markdown",
+    config = function()
+      vim.g.mkdp_auto_start = 0
+    end,
+  },
+  {
     "folke/todo-comments.nvim",
     event = "BufRead",
     config = function()
@@ -118,15 +115,9 @@ lvim.plugins = {
     "folke/noice.nvim",
     event = "VeryLazy",
     opts = {
-
-      -- add any options here
     },
     dependencies = {
-      -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
       "MunifTanjim/nui.nvim",
-      -- OPTIONAL:
-      --   `nvim-notify` is only needed, if you want to use the notification view.
-      --   If not available, we use `mini` as the fallback
       "rcarriga/nvim-notify",
     }
   },
@@ -138,6 +129,11 @@ lvim.plugins = {
       render = "wrapped-compact",
     },
   },
+  {
+    "turbio/bracey.vim",
+    cmd = { "Bracey", "BracyStop", "BraceyReload", "BraceyEval" },
+    build = "npm install --prefix server",
+  },
   -- {
   --   'b0o/incline.nvim',
   --   config = function()
@@ -145,6 +141,40 @@ lvim.plugins = {
   --   end,
   --   -- Optional: Lazy load Incline
   --   event = 'VeryLazy',
+  -- },
+  -- {
+  --   "nvim-neo-tree/neo-tree.nvim",
+  --   branch = "v2.x",
+  --   dependencies = {
+  --     "nvim-lua/plenary.nvim",
+  --     "nvim-tree/nvim-web-devicons",
+  --     "MunifTanjim/nui.nvim",
+  --   },
+  --   config = function()
+  --     require("neo-tree").setup({
+  --       close_if_last_window = true,
+  --       window = {
+  --         width = 30,
+  --       },
+  --       buffers = {
+  --         follow_current_file = true,
+  --       },
+  --       filesystem = {
+  --         follow_current_file = true,
+  --         filtered_items = {
+  --           hide_dotfiles = false,
+  --           hide_gitignored = false,
+  --           hide_by_name = {
+  --             "node_modules"
+  --           },
+  --           never_show = {
+  --             ".DS_Store",
+  --             "thumbs.db"
+  --           },
+  --         },
+  --       },
+  --     })
+  --   end
   -- },
 }
 
@@ -158,7 +188,7 @@ formatters.setup {
     -- options such as `--line-width 80` become either `{"--line-width", "80"}` or `{"--line-width=80"}`
     args = { "--print-width", "100" },
     ---@usage only start in these filetypes, by default it will attach to all filetypes it supports
-    filetypes = { "typescript", "typescriptreact", "javascript", "javascriptreact" },
+    filetypes = { "typescript", "typescriptreact", "javascript", "javascriptreact", "json" },
   },
 }
 
@@ -170,6 +200,7 @@ linters.setup {
     args = { "--severity", "warning" },
   },
 }
+
 
 local code_actions = require "lvim.lsp.null-ls.code_actions"
 code_actions.setup {
@@ -207,6 +238,7 @@ table.insert(lvim.plugins, {
   },
   config = true,
 })
+
 
 -- table.insert(lvim.plugins, {
 --   'b0o/incline.nvim',
