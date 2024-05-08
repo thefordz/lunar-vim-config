@@ -3,12 +3,11 @@
 -- Forum: https://www.reddit.com/r/lunarvim/
 -- Discord: https://discord.com/invite/Xb9B4Ny
 
--- general
+-- NOTE: Ganeral Setting
 lvim.colorscheme = "catppuccin"
 lvim.format_on_save.pattern = { "*.lua", "*.js", "*.jsx", "*ts", "*tsx", ".json", "*.cs" }
 lvim.format_on_save.enabled = true
 lvim.transparent_window = true
-
 vim.opt.wrap = false
 vim.opt.relativenumber = true
 lvim.debug = false
@@ -17,17 +16,17 @@ require("lvim.lsp.manager").setup("tailwindcss", opts)
 require("lvim.lsp.manager").setup("eslint", opts)
 
 
+-- NOTE: Lualine Setting
 lvim.builtin.lualine.active = false
 lvim.builtin.lualine.style = "lvim"
 
 
--- NOTE:  nvimtree setup
+-- NOTE:  Nvimtree Setting
 lvim.builtin.nvimtree.active = true
 lvim.builtin.nvimtree.setup.renderer.icons.glyphs.folder.arrow_closed = ""
 lvim.builtin.nvimtree.setup.renderer.icons.glyphs.folder.arrow_open = ""
 
-
--- NOTE: This setup for float nvimtree
+-- NOTE:  Enable To Use Nvimtree Float Style
 local HEIGHT_RATIO = .7
 local WIDTH_RATIO = .7
 local screen_w = vim.opt.columns:get()
@@ -50,17 +49,39 @@ lvim.builtin.nvimtree.setup.view.float.open_win_config.col = center_x
 lvim.builtin.nvimtree.setup.view.float.open_win_config.width = window_w_int
 lvim.builtin.nvimtree.setup.view.float.open_win_config.height = window_h_int
 lvim.builtin.nvimtree.setup.view.width = math.floor(vim.opt.columns:get() * WIDTH_RATIO)
+
+
+-- NOTE: Telescope Mapping
+lvim.builtin.which_key.mappings["f"] = {
+  name = "Find",
+  g = { "<cmd>Telescope git_files<cr>", "Find git files" },
+  b = { "<cmd>Telescope git_branches<cr>", "Checkout branch" },
+  c = { "<cmd>Telescope colorscheme<cr>", "Colorscheme" },
+  f = { "<cmd>Telescope find_files<cr>", "Find files" },
+  t = { "<cmd>Telescope live_grep<cr>", "Find Text" },
+  T = { "<cmd>TodoTelescope<cr>", "Find TODO" },
+  s = { "<cmd>Telescope grep_string<cr>", "Find String" },
+  h = { "<cmd>Telescope help_tags<cr>", "Help" },
+  H = { "<cmd>Telescope highlights<cr>", "Highlights" },
+  i = { "<cmd>lua require('telescope').extensions.media_files.media_files()<cr>", "Media" },
+  l = { "<cmd>Telescope resume<cr>", "Last Search" },
+  M = { "<cmd>Telescope man_pages<cr>", "Man Pages" },
+  r = { "<cmd>Telescope oldfiles<cr>", "Recent File" },
+  R = { "<cmd>Telescope registers<cr>", "Registers" },
+  k = { "<cmd>Telescope keymaps<cr>", "Keymaps" },
+  C = { "<cmd>Telescope commands<cr>", "Commands" },
+}
+
+-- NOTE: Telescope Config
 lvim.builtin.telescope.theme = "center"
 
--- telescope config
--- lvim.builtin.telescope.defaults.layout_strategy = "horizontal"
--- lvim.builtin.telescope.defaults.sorting_strategy = "ascending"
--- lvim.builtin.telescope.defaults.winblend = 0
--- lvim.builtin.telescope.theme = 'ivy'
 
+-- NOTE: Telescope Extention
 lvim.builtin.telescope.on_config_done = function(telescope)
   pcall(telescope.load_extension, "frecency")
   pcall(telescope.load_extension, "neoclip")
+  pcall(telescope.load_extension, "fzf")
+  pcall(telescope.load_extension, "file_browser")
 end
 
 
@@ -71,27 +92,29 @@ lvim.keys.normal_mode["<C-j>"] = "<cmd> TmuxNavigateDown<CR>"
 lvim.keys.normal_mode["<C-k>"] = "<cmd> TmuxNavigateUp<CR>"
 
 
--- Additional Plugins
+-- NOTE: Additional Plugins
 lvim.plugins = {
+  -- NOTE: Catppuccin Theme
   { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
+
+
+  -- NOTE: Auto Save
   -- {
   --   "Pocco81/auto-save.nvim",
   --   config = function()
   --     require("auto-save").setup()
   --   end,
   -- },
-  {
-    "folke/tokyonight.nvim",
-    lazy = false,
-    priority = 1000,
-    opts = {},
-  },
+  --
+  -- NOTE: Auto Close Tag
   {
     "windwp/nvim-ts-autotag",
     config = function()
       require("nvim-ts-autotag").setup()
     end,
   },
+
+  -- NOTE: Markdown Preview
   {
     "iamcco/markdown-preview.nvim",
     build = "cd app && npm install",
@@ -100,6 +123,8 @@ lvim.plugins = {
       vim.g.mkdp_auto_start = 0
     end,
   },
+
+  -- NOTE: Todo Comment
   {
     "folke/todo-comments.nvim",
     event = "BufRead",
@@ -107,33 +132,55 @@ lvim.plugins = {
       require("todo-comments").setup()
     end,
   },
+
+  -- NOTE: Tmux
   {
     "christoomey/vim-tmux-navigator",
     lazy = false,
   },
+
+  -- NOTE: Noice
   {
     "folke/noice.nvim",
     event = "VeryLazy",
     opts = {
+      presets = { inc_rename = true }
     },
     dependencies = {
       "MunifTanjim/nui.nvim",
       "rcarriga/nvim-notify",
     }
   },
+
+  -- NOTE: Notify
   {
     "rcarriga/nvim-notify",
     opts = {
-      timeout = 5000,
+      timeout = 1000,
       background_colour = "#000000",
-      render = "wrapped-compact",
+      render = "minimal",
+
+
     },
   },
+
+  -- NOTE: HTML Server
   {
     "turbio/bracey.vim",
     cmd = { "Bracey", "BracyStop", "BraceyReload", "BraceyEval" },
     build = "npm install --prefix server",
   },
+
+  {
+    "nvim-telescope/telescope-fzy-native.nvim",
+    build = "make",
+    event = "BufRead",
+  },
+
+  {
+    "nvim-telescope/telescope-file-browser.nvim",
+    dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" }
+  }
   -- {
   --   'b0o/incline.nvim',
   --   config = function()
@@ -213,6 +260,7 @@ code_actions.setup {
   },
 }
 
+-- NOTE: Copilot
 table.insert(lvim.plugins, {
   "zbirenbaum/copilot-cmp",
   event = "InsertEnter",
@@ -225,6 +273,7 @@ table.insert(lvim.plugins, {
   end,
 })
 
+-- NOTE: Inc Rename
 table.insert(lvim.plugins, {
   "smjonas/inc-rename.nvim",
   cmd = "IncRename",
@@ -242,32 +291,3 @@ table.insert(lvim.plugins, {
   },
   config = true,
 })
-
-
--- table.insert(lvim.plugins, {
---   'b0o/incline.nvim',
---   event = "BufReadPre",
---   config = function()
---     local helpers = require("incline.helpers")
---     require("incline").setup({
---       window = {
---         padding = 0,
---         margin = { horizontal = 0 },
---       },
---       render = function(props)
---         local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(props.buf), ":t")
---         local ft_icon, ft_color = require("nvim-web-devicons").get_icon_color(filename)
---         local modified = vim.bo[props.buf].modified
---         local buffer = {
---           ft_icon and { " ", ft_icon, " ", guibg = ft_color, guifg = helpers.contrast_color(ft_color) }
---           or "",
---           " ",
---           { filename, gui = modified and "bold,italic" or "bold" },
---           " ",
---           guibg = "#363944",
---         }
---         return buffer
---       end,
---     })
---   end,
--- })
