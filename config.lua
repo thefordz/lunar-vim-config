@@ -11,9 +11,33 @@ lvim.transparent_window = true
 vim.opt.wrap = false
 vim.opt.relativenumber = true
 lvim.debug = false
-local opts = {}
+local opts = {
+
+}
 require("lvim.lsp.manager").setup("tailwindcss", opts)
 require("lvim.lsp.manager").setup("eslint", opts)
+require("lvim.lsp.manager").setup("cssls", {
+  settings = {
+    css = {
+      validate = true,
+      lint = {
+        unknownAtRules = "ignore"
+      }
+    },
+    less = {
+      validate = true,
+      lint = {
+        unknownAtRules = "ignore"
+      }
+    },
+    scss = {
+      validate = true,
+      lint = {
+        unknownAtRules = "ignore"
+      }
+    },
+  },
+})
 
 
 -- NOTE: Lualine Setting
@@ -250,6 +274,7 @@ linters.setup {
     name = "shellcheck",
     args = { "--severity", "warning" },
   },
+
 }
 
 
